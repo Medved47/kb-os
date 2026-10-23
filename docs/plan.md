@@ -1,6 +1,6 @@
 # Plan: KB OS (persönliche Tages-App für Kevin)
 
-Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritt 1 gebaut (siehe `CLAUDE.md`, Abschnitt Stand).
+Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritt 1 gebaut, Schritt 2 teilweise (siehe `CLAUDE.md`, Abschnitt Stand).
 
 ## Entscheidungen (mit Kevin abgestimmt)
 
@@ -116,6 +116,16 @@ Sicherheit: Zugriff nur für Kevin. Keine Daten an Dritte außer den nötigen AP
 6. **Geld:** Abos und Einmalzahlungen, Warnungen, Monatssumme, Belege nach Drive.
 7. **Push-Berichte:** Morgenbriefing (werktags 5:00, Wochenende 9:00), Wochenrückblick (erledigt, Ausgaben, nächste Woche, 3 feste Fragen).
 8. **Ablösen:** Claude-Dashboard (Artifact) und alte Läufe abschalten, nach Rücksprache.
+
+## Erweiterungen (Kevin, 23.10.)
+
+KB OS soll für das Leben das sein, was das Business OS fürs Geschäft ist: Dinge abnehmen, erinnern, beraten. Kevin will alle Vorschläge, genaue Reihenfolge noch abstimmen.
+
+- **Bank:** privates Konto Volksbank Böblingen (Atruvia) über Enable Banking (PSD2, kostenlos für eigene Konten, Freigabe alle 90 Tage neu). Umsätze automatisch, Kategorien, Verträge/Abos aus wiederkehrenden Abbuchungen, Fixkosten, Kontowecker (niedriger Stand, ungewöhnliche Abbuchung, Preiserhöhung), Prognose Monatsende, Kündigungsfristen. Erweitert Schritt 6.
+- **Ablaufdaten:** Ausweis, Reisepass, Führerschein, Kreditkarte, Versicherungen, Garantien (Beleg nach Drive), ggf. Auto (TÜV, Reifen).
+- **Wiederkehrendes:** feste Rhythmen (Zahnarzt, Check-up, Zählerstand, Rauchmelder, Steuer), Geburtstage aus Google-Kontakten, Haushalt (Putzplan, Einkaufsliste).
+- **Kopf frei:** Gedanken schnell notieren und später einsortieren, Gewohnheiten, Wochenplan am Sonntag.
+- **Berater:** Offen, ob A (Claude-App mit KB-OS-Connector, Schritt 5, keine Zusatzkosten) oder B (Chat in KB OS über Claude API, kostet pro Nutzung). Empfehlung A.
 
 ## Offen
 
