@@ -48,6 +48,8 @@ test("Briefing-Satz", () => {
   assert.equal(briefing(1, 0, 0), "Heute noch 1 Termin.");
   assert.equal(briefing(3, 4, 2), "Heute noch 3 Termine und 4 Aufgaben, davon 2 überfällig.");
   assert.equal(briefing(0, 1, 0), "Heute noch 1 Aufgabe.");
+  assert.equal(briefing(1, 0, 0, 2), "Heute noch 1 Termin. 2 Mails brauchen dich.");
+  assert.equal(briefing(0, 0, 0, 1), "1 Mail braucht dich.");
 });
 
 test("Dauer und Wiederholung aus Todoist", () => {

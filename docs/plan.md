@@ -40,7 +40,7 @@ Vier Reiter unten wie in einer iOS-App. Systemschrift, abgerundete Karten, Hell-
 
 ### 2. Postfach
 - Umschalter Geschäftlich / Privat, darunter die Ordner Wichtig, Rechnungen, Konten, Werbung, Info, dazu "Einordnen"
-- Mail öffnen, als Entwurf antworten (geschäftlich mit Absender hello@webstudio-design.de, Anrede aus dem Business OS)
+- Mail öffnen, als Entwurf antworten (geschäftlich mit Absender hello@webcodic.de, Kevin 24.10.; Anrede aus dem Business OS)
 - Textbausteine für wiederkehrende Antworten
 - Mail zu Aufgabe machen (Todoist oder Business OS, mit Link zur Mail)
 - Knopf "Abbestellen" bei Werbung (List-Unsubscribe, nur auf Tippen)

@@ -13,6 +13,10 @@ import { AlleAufMorgen } from "@/components/alle-auf-morgen";
 import { Abschnitt, Meldung, Titel, Zeile } from "@/components/ui";
 import { SymbolZahnrad } from "@/components/symbole";
 import { AufgabeZeile } from "@/components/aufgabe-zeile";
+import { AppBadge } from "@/components/app-badge";
+import { MailZeile } from "@/components/mail-zeile";
+import { NichtVerbunden } from "@/lib/gmail";
+import { brauchtDich } from "@/lib/postfach";
 
 // Farbe je Konto: Business blau, Privat orange
 const PUNKT = { business: "bg-akzent", privat: "bg-orange" } as const;
@@ -22,14 +26,17 @@ export default async function HeuteSeite() {
   const jetzt = new Date();
   // Abendabschluss ab 17 Uhr
   const abends = berlinStunde(jetzt) >= 17;
-  const [kalender, wetter, aufgaben, business, erledigt] = await Promise.all([
+  const [kalender, wetter, aufgaben, business, erledigt, post] = await Promise.all([
     termineAmTag(createAdminClient(), jetzt),
     wetterHeute(berlinStunde(jetzt)).catch(() => null),
     alleAufgaben(),
     // Fehler zeigt schon die Aufgabenliste
     businessDaten().catch(() => null),
     abends ? erledigtHeute(jetzt) : null,
+    // Postfach: ohne Google-Verbindung still weglassen, sonst Fehler zeigen
+    brauchtDich(createAdminClient()).catch((e: unknown) => (e instanceof NichtVerbunden ? null : { fehler: e instanceof Error ? e.message : String(e) })),
   ]);
+  const mail = post && "mails" in post ? post : null;
   const heute = berlinDatum(jetzt);
   const fristen = (business?.fristen ?? []).slice(0, 5);
   const faellig = aufgaben.aufgaben.filter((a) => gruppe(a, heute) !== "woche");
@@ -58,7 +65,7 @@ export default async function HeuteSeite() {
         }
       />
       <div className="flex flex-col gap-6 px-4">
-        <p className="px-1 text-[20px] font-semibold leading-snug">{briefing(offen.length, faellig.length, ueberfaellig)}</p>
+        <p className="px-1 text-[20px] font-semibold leading-snug">{briefing(offen.length, faellig.length, ueberfaellig, mail?.anzahl ?? 0)}</p>
 
         {last.zuViel && (
           <p className="-mt-3 px-1 text-[15px] font-semibold text-orange">
@@ -67,6 +74,24 @@ export default async function HeuteSeite() {
         )}
 
         {wetter && <WetterZeile wetter={wetter} />}
+
+        {mail && <AppBadge anzahl={mail.anzahl} />}
+        {mail && mail.anzahl > 0 && (
+          <Abschnitt titel="Braucht dich">
+            {mail.mails.map((m) => (
+              <MailZeile key={m.id} mail={m} />
+            ))}
+            {mail.einordnen > 0 && (
+              <Zeile>
+                <Link href="/postfach?ordner=einordnen" className="druck flex flex-1 items-center justify-between">
+                  <span className="font-semibold text-orange">Einordnen</span>
+                  <span className="text-[15px] text-text-2">{mail.einordnen} ›</span>
+                </Link>
+              </Zeile>
+            )}
+          </Abschnitt>
+        )}
+        {post && "fehler" in post && <Meldung>Postfach: {post.fehler}</Meldung>}
 
         <Abschnitt titel="Termine">
           {ganztags.map((t) => (

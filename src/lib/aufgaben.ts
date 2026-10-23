@@ -136,10 +136,14 @@ export async function todoistErledigtHeute(jetzt: Date): Promise<Erledigt[]> {
   return (d.items ?? []).map((t) => ({ id: t.id ?? t.task_id ?? t.content, quelle: "todoist", titel: t.content }));
 }
 
-export async function todoistAnlegen(titel: string, faellig: string | null): Promise<void> {
+export async function todoistAnlegen(titel: string, faellig: string | null, beschreibung: string | null = null): Promise<void> {
   await todoist("/tasks", {
     method: "POST",
-    body: JSON.stringify({ content: titel, ...(faellig ? { due_date: faellig } : {}) }),
+    body: JSON.stringify({
+      content: titel,
+      ...(faellig ? { due_date: faellig } : {}),
+      ...(beschreibung ? { description: beschreibung } : {}),
+    }),
   });
 }
 

@@ -9,6 +9,7 @@ import { Abschnitt, Titel, Zeile } from "@/components/ui";
 import { PushSchalter } from "./push-schalter";
 import { AbmeldenKnopf } from "./abmelden-knopf";
 import { GoogleAbschnitt } from "./google-abschnitt";
+import { RegelnAbschnitt, TextbausteineAbschnitt, type Baustein, type Regel } from "./postfach-abschnitt";
 
 export const metadata: Metadata = { title: "Einstellungen" };
 
@@ -21,6 +22,10 @@ export default async function EinstellungenSeite({ searchParams }: PageProps<"/e
     .from("push_abos")
     .select("endpoint, geraet, zuletzt_ok_am")
     .order("erstellt_am");
+  const [{ data: bausteine }, { data: regeln }] = await Promise.all([
+    kb.from("textbausteine").select("id, titel, text").order("titel"),
+    kb.from("mail_regeln").select("absender, bereich, ordner").order("absender"),
+  ]);
   const liste = (geraete ?? []) as { endpoint: string; geraet: string | null; zuletzt_ok_am: string | null }[];
 
   return (
@@ -48,6 +53,8 @@ export default async function EinstellungenSeite({ searchParams }: PageProps<"/e
             ))}
           </Abschnitt>
         )}
+        <TextbausteineAbschnitt bausteine={(bausteine ?? []) as Baustein[]} />
+        <RegelnAbschnitt regeln={(regeln ?? []) as Regel[]} />
         <Abschnitt>
           <AbmeldenKnopf />
         </Abschnitt>

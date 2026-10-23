@@ -21,7 +21,7 @@ Für die nächste Claude-Session. Plan: `docs/plan.md`, Regeln: `CLAUDE.md`, Her
 
 ## Offen (Reihenfolge mit Kevin abgestimmt: als Nächstes Schritt 4)
 
-1. **Schritt 4 Postfach** (siehe Plan): Gmail lesen, Ordner, Regel-Sortierung alle 15 Minuten, "Einordnen", Entwürfe, Textbausteine, Mail zu Aufgabe, Abbestellen, Badge. Mail-Regeln unten.
+1. **Schritt 4 Postfach: gebaut 24.10.** (Details `CLAUDE.md`, Stand). Offen bei Kevin: Migration `20261024000000_kb_postfach.sql` ausführen, Google Privat verbinden (lief am 24.10. auf "401 invalid_client"; Variablen werden jetzt getrimmt, sonst `GOOGLE_CLIENT_ID` in Cloudflare prüfen), in Gmail `hello@webcodic.de` unter "Senden als" einrichten (sonst kommen Entwürfe von der Gmail-Adresse). Der erste Cron-Lauf merkt sich nur den Stand, Altbestand bleibt. Nicht live geprüft.
 2. **App-Icon:** Kevin entwirft selbst ein Logo und lädt es hoch (PNG ≥ 1024 px, quadratisch, ohne Transparenz, ~10 % Rand). Daraus `public/icons/` (180, 192, 512) erzeugen; `scripts/icons.mjs` zeichnet bisher das YK-Zeichen auf Blau. Danach App auf dem iPhone neu zum Home-Bildschirm hinzufügen.
 3. **Steuerfristen** und Fristen aus Mails (Schritt 2 Rest, `src/lib/fristen.ts`).
 4. **Schritte 5 bis 8** laut Plan; Erweiterungen (Bank über Enable Banking, Ablaufdaten, Wiederkehrendes, Berater über Claude-Connector) unter "Erweiterungen" im Plan.

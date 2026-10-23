@@ -2,8 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig } from "./config";
 
-// Seiten, die ohne Anmeldung erreichbar sind
-const OEFFENTLICH = ["/login"];
+// Seiten, die ohne Anmeldung erreichbar sind. /api/cron prüft sein Token selbst.
+const OEFFENTLICH = ["/login", "/api/cron"];
 
 // Frischt die Sitzung bei jeder Anfrage auf und leitet nicht angemeldete
 // Nutzer zum Login um. Zwei-Faktor und Zugang prüft requireZugang().

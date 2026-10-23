@@ -1,11 +1,16 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
+	// Eigener Einstieg mit Cron (worker.ts), leitet an .open-next/worker.js weiter
+	"main": "worker.ts",
 	"name": "kb-os",
 	"compatibility_date": "2026-09-01",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	// Im Dashboard gesetzte Variablen bei Deployments nicht löschen
 	"keep_vars": true,
+	// Mail sortieren alle 15 Minuten (src/app/api/cron/route.ts)
+	"triggers": {
+		"crons": ["*/15 * * * *"]
+	},
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"

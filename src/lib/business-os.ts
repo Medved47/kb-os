@@ -94,3 +94,24 @@ export async function businessErledigen(id: string): Promise<void> {
   if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Ungültige Aufgaben-ID.");
   await senden({ aktion: "erledigen", id });
 }
+
+// Aufgabe des Inhabers im Business OS anlegen (z. B. aus einer Mail)
+export async function businessAnlegen(titel: string, faellig: string | null, beschreibung: string | null): Promise<void> {
+  await senden({ aktion: "anlegen", titel, faellig_am: faellig, beschreibung });
+}
+
+export type Kontakt = { name: string; firma: string; anrede: "du" | "sie" | null };
+
+// Kontakt im Business OS zu einer Mailadresse (für die Anrede), null = unbekannt
+export async function businessKontakt(email: string): Promise<Kontakt | null> {
+  const k = konfig();
+  if (!k) return null;
+  const r = await fetch(`${k.url}/api/kb`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${k.token}`, "content-type": "application/json" },
+    body: JSON.stringify({ aktion: "kontakt", email }),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!r.ok) throw new Error(`Business OS HTTP ${r.status}`);
+  return ((await r.json()) as { kontakt?: Kontakt | null }).kontakt ?? null;
+}
