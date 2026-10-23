@@ -42,3 +42,4 @@ Plan und Entscheidungen: [docs/plan.md](docs/plan.md), Übergabe aus claude.ai: 
 
 - Schritt 0 (Vorbereitung) erledigt: Google-Cloud-Projekt "KB OS" (extern, in Produktion, nicht verifiziert), Todoist-Token.
 - Schritt 1 (Grundgerüst) gebaut: Login mit Zwei-Faktor, vier Reiter, Einstellungen mit Push, Offline-Stand. Migration `20261023000000_kb_grundgeruest.sql`.
+- Einrichtung 2026-10-23: Supabase-Schema `kb` ausgeführt, Cloudflare-Worker `kb-os` mit Domain `kb.webcodic.de` und Variablen angelegt, mit GitHub (`main`) verbunden.
