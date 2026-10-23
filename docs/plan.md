@@ -8,6 +8,7 @@ Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Rep
 |---|---|
 | Repo | `Medved47/kb-os` |
 | Hosting | Cloudflare Workers über OpenNext, wie das Business OS. Cron alle 15 Minuten im Free-Tarif. |
+| Adresse | `kb.webcodic.de` (Google-Rückruf `https://kb.webcodic.de/google/rueckruf`) |
 | Stack | Next.js (App Router, TypeScript), Tailwind, PWA |
 | Datenbank | Bestehendes Supabase-Projekt `business-os`, eigenes Schema. Belegt: 33,7 MB von 500 MB (23.10.). |
 | Login | Bestehendes Supabase-Konto von Kevin mit Zwei-Faktor, zusätzlich auf Kevins Nutzer-ID beschränkt |
