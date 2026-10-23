@@ -125,7 +125,7 @@ KB OS soll für das Leben das sein, was das Business OS fürs Geschäft ist: Din
 - **Ablaufdaten:** Ausweis, Reisepass, Führerschein, Kreditkarte, Versicherungen, Garantien (Beleg nach Drive), ggf. Auto (TÜV, Reifen).
 - **Wiederkehrendes:** feste Rhythmen (Zahnarzt, Check-up, Zählerstand, Rauchmelder, Steuer), Geburtstage aus Google-Kontakten, Haushalt (Putzplan, Einkaufsliste).
 - **Kopf frei:** Gedanken schnell notieren und später einsortieren, Gewohnheiten, Wochenplan am Sonntag.
-- **Berater:** Offen, ob A (Claude-App mit KB-OS-Connector, Schritt 5, keine Zusatzkosten) oder B (Chat in KB OS über Claude API, kostet pro Nutzung). Empfehlung A.
+- **Berater:** Entschieden 23.10.: über Claude in der Claude-App mit KB-OS-Connector (Schritt 5), keine Claude API in der App. Der Connector bekommt dafür Lesezugriff auf Termine, Aufgaben, Fristen und Geld.
 
 ## Offen
 
