@@ -1,7 +1,7 @@
 # KB OS – Anleitung für Claude
 
 Persönliche Tages-App (PWA) für Kevin: Heute, Postfach, Aufgaben, Geld. Nur ein Nutzer.
-Plan und Entscheidungen: [docs/plan.md](docs/plan.md), Übergabe aus claude.ai: [docs/uebergabe.md](docs/uebergabe.md). Bei Änderungen am Plan dort nachziehen.
+Plan und Entscheidungen: [docs/plan.md](docs/plan.md), Übergabe aus claude.ai: [docs/uebergabe.md](docs/uebergabe.md). Aktueller Stand und offene Punkte: [docs/stand.md](docs/stand.md), zuerst lesen. Bei Änderungen am Plan dort nachziehen.
 
 ## Regeln
 
