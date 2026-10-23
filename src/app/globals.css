@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* Dunkel folgt der Systemeinstellung */
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+/* Farben nach iOS: gruppierter Grund, Karten, ruhige Akzente */
+:root {
+  --grund: #f2f2f7;
+  --flaeche: #ffffff;
+  --flaeche-2: #e5e5ea;
+  --text: #000000;
+  --text-2: rgba(60, 60, 67, 0.6);
+  --text-3: rgba(60, 60, 67, 0.3);
+  --trenner: rgba(60, 60, 67, 0.18);
+  --akzent: #007aff;
+  --rot: #ff3b30;
+  --orange: #ff9500;
+  --gruen: #34c759;
+  --leiste: rgba(249, 249, 249, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grund: #000000;
+    --flaeche: #1c1c1e;
+    --flaeche-2: #2c2c2e;
+    --text: #ffffff;
+    --text-2: rgba(235, 235, 245, 0.6);
+    --text-3: rgba(235, 235, 245, 0.3);
+    --trenner: rgba(84, 84, 88, 0.6);
+    --akzent: #0a84ff;
+    --rot: #ff453a;
+    --orange: #ff9f0a;
+    --gruen: #30d158;
+    --leiste: rgba(22, 22, 23, 0.85);
+  }
+}
+
+@theme inline {
+  --color-grund: var(--grund);
+  --color-flaeche: var(--flaeche);
+  --color-flaeche-2: var(--flaeche-2);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-trenner: var(--trenner);
+  --color-akzent: var(--akzent);
+  --color-rot: var(--rot);
+  --color-orange: var(--orange);
+  --color-gruen: var(--gruen);
+  --color-leiste: var(--leiste);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  background: var(--grund);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--grund);
+}
+
+/* Höhe der unteren Leiste inkl. Home-Leiste des iPhones */
+:root {
+  --unten: calc(56px + env(safe-area-inset-bottom));
+}
+
+/* Karte: abgerundet, ohne Rahmen, wie gruppierte Listen in iOS */
+@utility karte {
+  background: var(--flaeche);
+  border-radius: 14px;
+}
+
+/* Drück-Feedback für Links und Knöpfe */
+@utility druck {
+  transition: transform 120ms ease, opacity 120ms ease;
+  &:active {
+    transform: scale(0.97);
+    opacity: 0.7;
+  }
+}
+
+/* Leiste mit Unschärfe (Tab-Leiste) */
+@utility leiste {
+  background: var(--leiste);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

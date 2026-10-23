@@ -1,0 +1,20 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "kb-os",
+	"compatibility_date": "2026-09-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Im Dashboard gesetzte Variablen bei Deployments nicht löschen
+	"keep_vars": true,
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// Selbstreferenz, Name muss dem Worker-Namen entsprechen
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "kb-os"
+		}
+	]
+}
