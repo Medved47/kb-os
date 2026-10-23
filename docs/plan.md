@@ -70,7 +70,8 @@ Vier Reiter unten wie in einer iOS-App. Systemschrift, abgerundete Karten, Hell-
 
 Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Ergänzt 23.10. von Kevin:
 
-- Alles mit dem Label "kevin.blecha@web.de" (Export und Weiterleitung von web.de) ist **immer Privat**, auch wenn der Absender nach Business aussieht.
+- Alles mit dem Label "kevin.blecha@web.de" (Export und Weiterleitung von web.de) ist **immer Privat**. Ausnahme mit Vorrang: Absender, Empfänger oder Weiterleitung über hello@webstudio-design.de oder hello@webcodic.de ist immer Geschäftlich.
+- Der Altbestand aus dem Workspace-Postfach (hello@webstudio-design.de) wird noch ins Haupt-Postfach importiert (Kevin). Die Weiterleitung für neue Mails steht.
 - "Im Zweifel Geschäftlich" gilt nur noch, wenn die Mail an eine Business-Adresse ging oder der Absender als geschäftlich bekannt ist. Sonst "Einordnen".
 
 Arbeitsteilung:
