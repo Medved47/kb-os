@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireZugang } from "@/lib/auth";
+import { alleAufgaben, gruppe } from "@/lib/aufgaben";
+import { briefing } from "@/lib/briefing";
 import { freieFenster, termineAmTag, type Termin } from "@/lib/kalender";
 import { wetterHeute, type Wetter } from "@/lib/wetter";
-import { berlinStunde, tagText, uhrzeit } from "@/lib/zeit";
+import { berlinDatum, berlinStunde, tagText, uhrzeit } from "@/lib/zeit";
 import { Abschnitt, Meldung, Titel, Zeile } from "@/components/ui";
 import { SymbolZahnrad } from "@/components/symbole";
+import { AufgabeZeile } from "@/components/aufgabe-zeile";
 
 // Farbe je Konto: Business blau, Privat orange
 const PUNKT = { business: "bg-akzent", privat: "bg-orange" } as const;
@@ -13,10 +16,14 @@ const PUNKT = { business: "bg-akzent", privat: "bg-orange" } as const;
 export default async function HeuteSeite() {
   await requireZugang();
   const jetzt = new Date();
-  const [kalender, wetter] = await Promise.all([
+  const [kalender, wetter, aufgaben] = await Promise.all([
     termineAmTag(createAdminClient(), jetzt),
     wetterHeute(berlinStunde(jetzt)).catch(() => null),
+    alleAufgaben(),
   ]);
+  const heute = berlinDatum(jetzt);
+  const faellig = aufgaben.aufgaben.filter((a) => gruppe(a, heute) !== "woche");
+  const ueberfaellig = faellig.filter((a) => gruppe(a, heute) === "ueberfaellig").length;
   const ganztags = kalender.termine.filter((t) => t.ganztags);
   const mitZeit = kalender.termine.filter((t) => !t.ganztags);
   const offen = mitZeit.filter((t) => t.ende > jetzt);
@@ -34,7 +41,7 @@ export default async function HeuteSeite() {
         }
       />
       <div className="flex flex-col gap-6 px-4">
-        <p className="px-1 text-[20px] font-semibold leading-snug">{briefing(offen.length)}</p>
+        <p className="px-1 text-[20px] font-semibold leading-snug">{briefing(offen.length, faellig.length, ueberfaellig)}</p>
 
         {wetter && <WetterZeile wetter={wetter} />}
 
@@ -67,6 +74,27 @@ export default async function HeuteSeite() {
           ))}
         </Abschnitt>
 
+        <Abschnitt titel="Nächste Aufgaben">
+          {faellig.slice(0, 3).map((a) => (
+            <AufgabeZeile key={`${a.quelle}:${a.id}`} aufgabe={a} />
+          ))}
+          {faellig.length === 0 && aufgaben.fehler.length === 0 && (
+            <Zeile className="text-text-2">Nichts fällig.</Zeile>
+          )}
+          {faellig.length > 3 && (
+            <Zeile>
+              <Link href="/aufgaben" className="druck text-[15px] text-akzent">
+                Alle {faellig.length} anzeigen
+              </Link>
+            </Zeile>
+          )}
+          {aufgaben.fehler.map((f) => (
+            <Zeile key={f}>
+              <Meldung>{f}</Meldung>
+            </Zeile>
+          ))}
+        </Abschnitt>
+
         {frei.length > 0 && (
           <Abschnitt titel="Frei">
             {frei.map((f) => (
@@ -82,12 +110,6 @@ export default async function HeuteSeite() {
       </div>
     </>
   );
-}
-
-// Briefing-Satz aus fester Vorlage. Aufgaben, Fristen und Mails kommen mit den nächsten Schritten dazu.
-function briefing(termine: number): string {
-  if (termine === 0) return "Heute keine Termine mehr.";
-  return termine === 1 ? "Heute noch 1 Termin." : `Heute noch ${termine} Termine.`;
 }
 
 function dauerText(ms: number): string {
