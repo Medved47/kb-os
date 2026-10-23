@@ -68,7 +68,12 @@ Vier Reiter unten wie in einer iOS-App. Systemschrift, abgerundete Karten, Hell-
 
 ## Mail-Sortierung
 
-Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Arbeitsteilung:
+Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Ergänzt 23.10. von Kevin:
+
+- Alles mit dem Label "kevin.blecha@web.de" (Export und Weiterleitung von web.de) ist **immer Privat**, auch wenn der Absender nach Business aussieht.
+- "Im Zweifel Geschäftlich" gilt nur noch, wenn die Mail an eine Business-Adresse ging oder der Absender als geschäftlich bekannt ist. Sonst "Einordnen".
+
+Arbeitsteilung:
 
 1. **App, alle 15 Minuten:** neue Mails über Gmail `history.list` holen, nach festen Regeln sortieren (Empfänger, Delivered-To, Weiterleitungs-Kopfzeilen, bekannte Absender). Nicht Zuordenbares bekommt das Label "Einordnen". Haupt- und Unterlabel immer zusammen.
 2. **Claude-Aufgabe in claude.ai, 7, 12 und 17 Uhr:** sortiert die Mails unter "Einordnen", schreibt Antwortentwürfe, erkennt Fristen und Abos und trägt sie über den Connector von KB OS ein. Die bestehenden geplanten Läufe gehen darin auf.
