@@ -1,6 +1,6 @@
 # Plan: KB OS (persönliche Tages-App für Kevin)
 
-Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritt 1 gebaut, Schritt 2 teilweise (siehe `CLAUDE.md`, Abschnitt Stand).
+Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritte 1 bis 3 gebaut (Schritt 2 ohne Steuerfristen) (siehe `CLAUDE.md`, Abschnitt Stand).
 
 ## Entscheidungen (mit Kevin abgestimmt)
 

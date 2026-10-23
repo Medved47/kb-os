@@ -49,3 +49,10 @@ export function tagesGrenzen(d: Date): { beginn: Date; ende: Date } {
   const morgen = new Date(berlinZeitpunkt(datum, 12).getTime() + 24 * 3600 * 1000);
   return { beginn: berlinZeitpunkt(datum, 0), ende: berlinZeitpunkt(berlinDatum(morgen), 0) };
 }
+
+// Datum (JJJJ-MM-TT) plus n Tage
+export function plusTage(datum: string, tage: number): string {
+  const d = new Date(`${datum}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + tage);
+  return d.toISOString().slice(0, 10);
+}

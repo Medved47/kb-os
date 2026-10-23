@@ -51,3 +51,14 @@ test("Abgesagte und abgelehnte Termine fallen weg, ganztägig erkannt", () => {
   assert.equal(g?.titel, "Urlaub");
   assert.equal(g?.beginn.toISOString(), "2026-10-22T22:00:00.000Z");
 });
+
+test("Vorschlag für einen Zeitblock", async () => {
+  const { blockVorschlag } = await import("@/lib/kalender");
+  const termine = [t("2026-10-23T08:00:00Z", "2026-10-23T09:00:00Z")]; // 10-11 Uhr
+  // jetzt 9:50 Uhr, 60 Minuten: 10-11 belegt, also 11:00
+  assert.equal(blockVorschlag(termine, new Date("2026-10-23T07:50:00Z"), 60).toISOString(), "2026-10-23T09:00:00.000Z");
+  // jetzt 9:05 Uhr, 30 Minuten: auf Viertelstunde aufgerundet 9:15
+  assert.equal(blockVorschlag(termine, new Date("2026-10-23T07:05:00Z"), 30).toISOString(), "2026-10-23T07:15:00.000Z");
+  // abends 19:40: nichts mehr frei, morgen 9 Uhr
+  assert.equal(blockVorschlag(termine, new Date("2026-10-23T17:40:00Z"), 60).toISOString(), "2026-10-24T07:00:00.000Z");
+});

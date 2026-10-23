@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { gruppe, todoistUmwandeln, vergleich, type Aufgabe } from "@/lib/aufgaben";
+import { arbeitslast, gruppe, todoistUmwandeln, vergleich, type Aufgabe } from "@/lib/aufgaben";
+import { dauerAuswahl, dauerText } from "@/lib/dauer";
 import { briefing } from "@/lib/briefing";
 
 const projekte = new Map([["p1", "Inbox"], ["p2", "Haushalt"]]);
@@ -30,6 +31,8 @@ const auf = (titel: string, faellig: string | null, prioritaet: Aufgabe["priorit
   prioritaet,
   zusatz: null,
   link: "",
+  wiederkehrend: false,
+  dauer: null,
 });
 
 test("Gruppen und Reihenfolge", () => {
@@ -45,4 +48,30 @@ test("Briefing-Satz", () => {
   assert.equal(briefing(1, 0, 0), "Heute noch 1 Termin.");
   assert.equal(briefing(3, 4, 2), "Heute noch 3 Termine und 4 Aufgaben, davon 2 überfällig.");
   assert.equal(briefing(0, 1, 0), "Heute noch 1 Aufgabe.");
+});
+
+test("Dauer und Wiederholung aus Todoist", () => {
+  const a = todoistUmwandeln(
+    { id: "1", content: "A", priority: 1, project_id: "p1", due: { date: "2026-10-23", is_recurring: true }, duration: { amount: 45, unit: "minute" } },
+    projekte,
+  );
+  assert.equal(a.dauer, 45);
+  assert.equal(a.wiederkehrend, true);
+  const b = todoistUmwandeln({ id: "2", content: "B", priority: 1, project_id: "p1", due: null, duration: { amount: 2, unit: "day" } }, projekte);
+  assert.equal(b.dauer, null);
+});
+
+test("Arbeitslast gegen freie Zeit", () => {
+  const mit = (titel: string, faellig: string, dauer: number | null): Aufgabe => ({ ...auf(titel, faellig), dauer });
+  const liste = [mit("a", "2026-10-22", 90), mit("b", "2026-10-23", 120), mit("c", "2026-10-23", null), mit("d", "2026-10-25", 300)];
+  assert.deepEqual(arbeitslast(liste, "2026-10-23", 180), { geplant: 210, frei: 180, ohneDauer: 1, zuViel: true });
+  assert.equal(arbeitslast(liste, "2026-10-23", 240).zuViel, false);
+});
+
+test("Dauer-Texte und Auswahl", () => {
+  assert.equal(dauerText(45), "45 Min.");
+  assert.equal(dauerText(120), "2 Std.");
+  assert.equal(dauerText(90), "1 Std. 30 Min.");
+  assert.deepEqual(dauerAuswahl(50).slice(0, 4), [15, 30, 45, 50]);
+  assert.equal(dauerAuswahl(60).length, 8);
 });

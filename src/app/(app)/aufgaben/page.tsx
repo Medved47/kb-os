@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { requireZugang } from "@/lib/auth";
 import { alleAufgaben, gruppe, type Aufgabe, type Gruppe } from "@/lib/aufgaben";
-import { berlinDatum } from "@/lib/zeit";
+import { blockVorschlag, termineAmTag } from "@/lib/kalender";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { berlinDatum, uhrzeit } from "@/lib/zeit";
 import { Abschnitt, Meldung, Titel, Zeile } from "@/components/ui";
 import { AufgabeZeile } from "@/components/aufgabe-zeile";
 import { Schnellerfassung } from "./schnellerfassung";
@@ -23,8 +25,14 @@ function kurzDatum(datum: string): string {
 
 export default async function AufgabenSeite() {
   await requireZugang();
-  const heute = berlinDatum(new Date());
-  const { aufgaben, fehler } = await alleAufgaben();
+  const jetzt = new Date();
+  const heute = berlinDatum(jetzt);
+  const [{ aufgaben, fehler }, kalender] = await Promise.all([alleAufgaben(), termineAmTag(createAdminClient(), jetzt)]);
+  // Vorschlag für einen Zeitblock (nächste freie Zeit, eigene Dauer oder 1 Stunde)
+  const block = (a: Aufgabe) => {
+    const beginn = blockVorschlag(kalender.termine, jetzt, a.dauer ?? 60);
+    return { datum: berlinDatum(beginn), uhrzeit: uhrzeit(beginn) };
+  };
   const nach = (g: Gruppe) => aufgaben.filter((a) => gruppe(a, heute) === g);
   const datumFuer = (a: Aufgabe, g: Gruppe) =>
     g === "heute" ? undefined : a.faellig ? kurzDatum(a.faellig) + (a.uhrzeit ? ` ${a.uhrzeit}` : "") : undefined;
@@ -44,7 +52,7 @@ export default async function AufgabenSeite() {
             <Abschnitt key={schluessel} titel={`${titel} (${liste.length})`}>
               {liste.length === 0 && <Zeile className="text-text-2">Nichts mehr für heute.</Zeile>}
               {liste.map((a) => (
-                <AufgabeZeile key={`${a.quelle}:${a.id}`} aufgabe={a} datum={datumFuer(a, schluessel)} />
+                <AufgabeZeile key={`${a.quelle}:${a.id}`} aufgabe={a} datum={datumFuer(a, schluessel)} block={block(a)} />
               ))}
             </Abschnitt>
           );

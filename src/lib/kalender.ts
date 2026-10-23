@@ -128,3 +128,39 @@ export function freieFenster(
   if (zeiger < schluss) fenster.push({ beginn: new Date(zeiger), ende: new Date(schluss) });
   return fenster.filter((f) => f.ende.getTime() - f.beginn.getTime() >= mindestMinuten * 60_000);
 }
+
+// Nächster freier Block für eine Aufgabe: erstes freies Fenster heute ab jetzt
+// mit genug Zeit (auf 15 Minuten aufgerundet), sonst morgen um 9 Uhr
+export function blockVorschlag(termine: Termin[], jetzt: Date, minuten: number): Date {
+  const viertel = 15 * 60_000;
+  const passend = freieFenster(termine, jetzt, jetzt, { von: 8, bis: 20 }, minuten)
+    .map((f) => ({ ...f, beginn: new Date(Math.ceil(f.beginn.getTime() / viertel) * viertel) }))
+    .find((f) => f.ende.getTime() - f.beginn.getTime() >= minuten * 60_000);
+  if (passend) return passend.beginn;
+  const morgen = new Date(berlinZeitpunkt(berlinDatum(jetzt), 12).getTime() + 24 * 3600 * 1000);
+  return berlinZeitpunkt(berlinDatum(morgen), 9);
+}
+
+// Aufgabe als Zeitblock in den Business-Kalender (Workspace) legen
+export async function zeitblockAnlegen(
+  db: SupabaseClient,
+  block: { titel: string; beginn: Date; minuten: number; link: string | null },
+): Promise<void> {
+  const token = await zugangsToken(db, "business");
+  if (!token) throw new Error("Business-Kalender ist nicht verbunden (Einstellungen → Google).");
+  const ende = new Date(block.beginn.getTime() + block.minuten * 60_000);
+  const r = await fetch(`${API}/calendars/primary/events`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      summary: block.titel,
+      description: block.link ? `Aufgabe: ${block.link}` : undefined,
+      start: { dateTime: block.beginn.toISOString(), timeZone: "Europe/Berlin" },
+      end: { dateTime: ende.toISOString(), timeZone: "Europe/Berlin" },
+      // Kein Termin mit anderen: keine Einladungen, Erinnerung 5 Minuten vorher
+      reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 5 }] },
+    }),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!r.ok) throw new Error(`Kalender HTTP ${r.status}`);
+}

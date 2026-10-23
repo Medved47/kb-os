@@ -1,5 +1,5 @@
 import { cache } from "react";
-import type { Aufgabe } from "@/lib/aufgaben";
+import type { Aufgabe, Erledigt } from "@/lib/aufgaben";
 
 // Anbindung an das Business OS (Repo Medved47/business-os, Route /api/kb).
 // Variablen: BUSINESS_OS_URL (z. B. https://os.webcodic.de), BUSINESS_OS_TOKEN
@@ -37,11 +37,17 @@ export function businessAufgabe(a: KbAufgabe, url: string): Aufgabe {
     prioritaet: PRIORITAET[a.prioritaet] ?? 2,
     zusatz: [a.kunde, a.projekt].filter(Boolean).join(" · ") || null,
     link: `${url}/aufgaben`,
+    wiederkehrend: false,
+    dauer: null,
   };
 }
 
 // Einmal pro Anfrage laden (Heute braucht Aufgaben und Fristen)
-export const businessDaten = cache(async (): Promise<{ aufgaben: Aufgabe[]; fristen: Frist[] } | null> => {
+export const businessDaten = cache(async (): Promise<{
+  aufgaben: Aufgabe[];
+  fristen: Frist[];
+  erledigt: Erledigt[];
+} | null> => {
   const k = konfig();
   if (!k) return null;
   const r = await fetch(`${k.url}/api/kb`, {
@@ -50,7 +56,7 @@ export const businessDaten = cache(async (): Promise<{ aufgaben: Aufgabe[]; fris
     cache: "no-store",
   });
   if (!r.ok) throw new Error(`Business OS HTTP ${r.status}`);
-  const d = (await r.json()) as { aufgaben: KbAufgabe[]; fristen: KbFrist[] };
+  const d = (await r.json()) as { aufgaben: KbAufgabe[]; fristen: KbFrist[]; erledigt?: { id: string; titel: string }[] };
   return {
     aufgaben: d.aufgaben.map((a) => businessAufgabe(a, k.url)),
     fristen: d.fristen.map((f) => ({
@@ -60,6 +66,7 @@ export const businessDaten = cache(async (): Promise<{ aufgaben: Aufgabe[]; fris
       zusatz: f.kunde,
       link: `${k.url}/projekte/${f.id}`,
     })),
+    erledigt: (d.erledigt ?? []).map((e) => ({ id: e.id, quelle: "business" as const, titel: e.titel })),
   };
 });
 
@@ -76,6 +83,11 @@ async function senden(daten: Record<string, unknown>): Promise<void> {
     const d = (await r.json().catch(() => null)) as { fehler?: string } | null;
     throw new Error(d?.fehler ?? `Business OS HTTP ${r.status}`);
   }
+}
+
+export async function businessVerschieben(id: string, datum: string): Promise<void> {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Ungültige Aufgaben-ID.");
+  await senden({ aktion: "verschieben", id, faellig_am: datum });
 }
 
 export async function businessErledigen(id: string): Promise<void> {
