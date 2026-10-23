@@ -128,7 +128,12 @@ async function kontoAdresse(konto: Konto, token: string): Promise<string> {
       ? "https://gmail.googleapis.com/gmail/v1/users/me/profile"
       : "https://www.googleapis.com/calendar/v3/calendars/primary";
   const r = await fetch(url, { headers: { authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(8000) });
-  if (!r.ok) throw new Error(`Konto nicht lesbar (HTTP ${r.status}).`);
+  if (!r.ok) {
+    // Häufig: API im Google-Cloud-Projekt nicht aktiviert (403 mit Hinweis)
+    const d = (await r.json().catch(() => null)) as { error?: { message?: string } } | null;
+    const api = konto === "privat" ? "Gmail API" : "Google Calendar API";
+    throw new Error(`${api}: Konto nicht lesbar (HTTP ${r.status})${d?.error?.message ? `: ${d.error.message}` : ""}`);
+  }
   const d = (await r.json()) as { emailAddress?: string; id?: string };
   const adresse = d.emailAddress ?? d.id;
   if (!adresse) throw new Error("Mailadresse des Kontos nicht gefunden.");

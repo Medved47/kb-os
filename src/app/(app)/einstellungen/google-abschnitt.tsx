@@ -14,7 +14,7 @@ const STATUS: Record<string, { text: string; art: "fehler" | "info" }> = {
 
 // Zwei Google-Konten: Privat (Gmail, Kalender) und Business (Workspace-Kalender, Drive).
 // Verbinden über die Route /google/verbinden (normaler Link, kein Prefetch).
-export function GoogleAbschnitt({ verbindungen, status }: { verbindungen: Verbindung[]; status?: string }) {
+export function GoogleAbschnitt({ verbindungen, status, grund }: { verbindungen: Verbindung[]; status?: string; grund?: string }) {
   const meldung = status ? STATUS[status] : undefined;
   return (
     <Abschnitt titel="Google">
@@ -50,7 +50,10 @@ export function GoogleAbschnitt({ verbindungen, status }: { verbindungen: Verbin
       })}
       {meldung && (
         <Zeile>
-          <Meldung art={meldung.art}>{meldung.text}</Meldung>
+          <Meldung art={meldung.art}>
+            {meldung.text}
+            {grund && <span className="mt-1 block break-words text-[13px]">Grund: {grund}</span>}
+          </Meldung>
         </Zeile>
       )}
     </Abschnitt>

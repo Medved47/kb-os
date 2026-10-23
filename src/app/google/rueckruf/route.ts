@@ -7,8 +7,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // löst den Code ein und speichert den Refresh-Token verschlüsselt.
 export async function GET(request: NextRequest) {
   await requireZugang();
-  const ziel = (status: string) => {
-    const antwort = NextResponse.redirect(new URL(`/einstellungen?google=${status}`, request.url));
+  // grund: kurze Fehlermeldung (ohne Geheimnisse) für die Anzeige unter Einstellungen
+  const ziel = (status: string, grund?: string) => {
+    const url = new URL(`/einstellungen?google=${status}`, request.url);
+    if (grund) url.searchParams.set("grund", grund.slice(0, 300));
+    const antwort = NextResponse.redirect(url);
     antwort.cookies.delete({ name: STATE_COOKIE, path: "/google" });
     return antwort;
   };
@@ -27,6 +30,6 @@ export async function GET(request: NextRequest) {
     return ziel(fehlendeScopes(konto, scopes).length > 0 ? "teilweise" : "verbunden");
   } catch (e) {
     console.error("Google-Rückruf:", e);
-    return ziel("fehler");
+    return ziel("fehler", e instanceof Error ? e.message : String(e));
   }
 }

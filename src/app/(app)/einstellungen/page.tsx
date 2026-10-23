@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Einstellungen" };
 
 export default async function EinstellungenSeite({ searchParams }: PageProps<"/einstellungen">) {
   const { kb } = await requireZugang();
-  const { google } = await searchParams;
+  const { google, grund } = await searchParams;
   const admin = createAdminClient();
   const [schluessel, verbindungen] = await Promise.all([vapid(admin), verbindungenLesen(admin)]);
   const { data: geraete } = await kb
@@ -37,7 +37,7 @@ export default async function EinstellungenSeite({ searchParams }: PageProps<"/e
       </div>
       <Titel titel="Einstellungen" />
       <div className="flex flex-col gap-6 px-4">
-        <GoogleAbschnitt verbindungen={verbindungen} status={typeof google === "string" ? google : undefined} />
+        <GoogleAbschnitt verbindungen={verbindungen} status={typeof google === "string" ? google : undefined} grund={typeof grund === "string" ? grund.slice(0, 300) : undefined} />
         <Abschnitt titel="Dieses Gerät">
           <PushSchalter vapidPublicKey={schluessel.oeffentlich} endpunkte={liste.map((g) => g.endpoint)} />
         </Abschnitt>
