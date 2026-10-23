@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireZugang } from "@/lib/auth";
+import { verbindungenLesen } from "@/lib/google";
 import { vapid } from "@/lib/push";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { standText } from "@/lib/zeit";
 import { Abschnitt, Titel, Zeile } from "@/components/ui";
 import { PushSchalter } from "./push-schalter";
 import { AbmeldenKnopf } from "./abmelden-knopf";
+import { GoogleAbschnitt } from "./google-abschnitt";
 
 export const metadata: Metadata = { title: "Einstellungen" };
 
-export default async function EinstellungenSeite() {
+export default async function EinstellungenSeite({ searchParams }: PageProps<"/einstellungen">) {
   const { kb } = await requireZugang();
-  const schluessel = await vapid(createAdminClient());
+  const { google } = await searchParams;
+  const admin = createAdminClient();
+  const [schluessel, verbindungen] = await Promise.all([vapid(admin), verbindungenLesen(admin)]);
   const { data: geraete } = await kb
     .from("push_abos")
     .select("endpoint, geraet, zuletzt_ok_am")
@@ -28,6 +32,7 @@ export default async function EinstellungenSeite() {
       </div>
       <Titel titel="Einstellungen" />
       <div className="flex flex-col gap-6 px-4">
+        <GoogleAbschnitt verbindungen={verbindungen} status={typeof google === "string" ? google : undefined} />
         <Abschnitt titel="Dieses Gerät">
           <PushSchalter vapidPublicKey={schluessel.oeffentlich} endpunkte={liste.map((g) => g.endpoint)} />
         </Abschnitt>

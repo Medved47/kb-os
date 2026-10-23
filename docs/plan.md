@@ -1,6 +1,6 @@
 # Plan: KB OS (persönliche Tages-App für Kevin)
 
-Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritt 1 gebaut (siehe `CLAUDE.md`, Abschnitt Stand).
+Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Schritt 0 erledigt, Schritt 1 gebaut, Schritt 2 teilweise (siehe `CLAUDE.md`, Abschnitt Stand).
 
 ## Entscheidungen (mit Kevin abgestimmt)
 
@@ -68,7 +68,13 @@ Vier Reiter unten wie in einer iOS-App. Systemschrift, abgerundete Karten, Hell-
 
 ## Mail-Sortierung
 
-Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Arbeitsteilung:
+Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Ergänzt 23.10. von Kevin:
+
+- Alles mit dem Label "kevin.blecha@web.de" (Export und Weiterleitung von web.de) ist **immer Privat**. Ausnahme mit Vorrang: Absender, Empfänger oder Weiterleitung über hello@webstudio-design.de oder hello@webcodic.de ist immer Geschäftlich.
+- Der Altbestand aus dem Workspace-Postfach (hello@webstudio-design.de) wird noch ins Haupt-Postfach importiert (Kevin). Die Weiterleitung für neue Mails steht.
+- "Im Zweifel Geschäftlich" gilt nur noch, wenn die Mail an eine Business-Adresse ging oder der Absender als geschäftlich bekannt ist. Sonst "Einordnen".
+
+Arbeitsteilung:
 
 1. **App, alle 15 Minuten:** neue Mails über Gmail `history.list` holen, nach festen Regeln sortieren (Empfänger, Delivered-To, Weiterleitungs-Kopfzeilen, bekannte Absender). Nicht Zuordenbares bekommt das Label "Einordnen". Haupt- und Unterlabel immer zusammen.
 2. **Claude-Aufgabe in claude.ai, 7, 12 und 17 Uhr:** sortiert die Mails unter "Einordnen", schreibt Antwortentwürfe, erkennt Fristen und Abos und trägt sie über den Connector von KB OS ein. Die bestehenden geplanten Läufe gehen darin auf.
@@ -110,6 +116,16 @@ Sicherheit: Zugriff nur für Kevin. Keine Daten an Dritte außer den nötigen AP
 6. **Geld:** Abos und Einmalzahlungen, Warnungen, Monatssumme, Belege nach Drive.
 7. **Push-Berichte:** Morgenbriefing (werktags 5:00, Wochenende 9:00), Wochenrückblick (erledigt, Ausgaben, nächste Woche, 3 feste Fragen).
 8. **Ablösen:** Claude-Dashboard (Artifact) und alte Läufe abschalten, nach Rücksprache.
+
+## Erweiterungen (Kevin, 23.10.)
+
+KB OS soll für das Leben das sein, was das Business OS fürs Geschäft ist: Dinge abnehmen, erinnern, beraten. Kevin will alle Vorschläge, genaue Reihenfolge noch abstimmen.
+
+- **Bank:** privates Konto Volksbank Böblingen (Atruvia) über Enable Banking (PSD2, kostenlos für eigene Konten, Freigabe alle 90 Tage neu). Umsätze automatisch, Kategorien, Verträge/Abos aus wiederkehrenden Abbuchungen, Fixkosten, Kontowecker (niedriger Stand, ungewöhnliche Abbuchung, Preiserhöhung), Prognose Monatsende, Kündigungsfristen. Erweitert Schritt 6.
+- **Ablaufdaten:** Ausweis, Reisepass, Führerschein, Kreditkarte, Versicherungen, Garantien (Beleg nach Drive), ggf. Auto (TÜV, Reifen).
+- **Wiederkehrendes:** feste Rhythmen (Zahnarzt, Check-up, Zählerstand, Rauchmelder, Steuer), Geburtstage aus Google-Kontakten, Haushalt (Putzplan, Einkaufsliste).
+- **Kopf frei:** Gedanken schnell notieren und später einsortieren, Gewohnheiten, Wochenplan am Sonntag.
+- **Berater:** Entschieden 23.10.: über Claude in der Claude-App mit KB-OS-Connector (Schritt 5), keine Claude API in der App. Der Connector bekommt dafür Lesezugriff auf Termine, Aufgaben, Fristen und Geld.
 
 ## Offen
 
