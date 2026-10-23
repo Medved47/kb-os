@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireZugang } from "@/lib/auth";
 import { alleAufgaben, gruppe } from "@/lib/aufgaben";
 import { briefing } from "@/lib/briefing";
+import { businessDaten } from "@/lib/business-os";
+import { countdown, tageBis } from "@/lib/fristen";
 import { freieFenster, termineAmTag, type Termin } from "@/lib/kalender";
 import { wetterHeute, type Wetter } from "@/lib/wetter";
 import { berlinDatum, berlinStunde, tagText, uhrzeit } from "@/lib/zeit";
@@ -16,12 +18,15 @@ const PUNKT = { business: "bg-akzent", privat: "bg-orange" } as const;
 export default async function HeuteSeite() {
   await requireZugang();
   const jetzt = new Date();
-  const [kalender, wetter, aufgaben] = await Promise.all([
+  const [kalender, wetter, aufgaben, business] = await Promise.all([
     termineAmTag(createAdminClient(), jetzt),
     wetterHeute(berlinStunde(jetzt)).catch(() => null),
     alleAufgaben(),
+    // Fehler zeigt schon die Aufgabenliste
+    businessDaten().catch(() => null),
   ]);
   const heute = berlinDatum(jetzt);
+  const fristen = (business?.fristen ?? []).slice(0, 5);
   const faellig = aufgaben.aufgaben.filter((a) => gruppe(a, heute) !== "woche");
   const ueberfaellig = faellig.filter((a) => gruppe(a, heute) === "ueberfaellig").length;
   const ganztags = kalender.termine.filter((t) => t.ganztags);
@@ -94,6 +99,24 @@ export default async function HeuteSeite() {
             </Zeile>
           ))}
         </Abschnitt>
+
+        {fristen.length > 0 && (
+          <Abschnitt titel="Fristen">
+            {fristen.map((f) => (
+              <Zeile key={f.id}>
+                <a href={f.link ?? undefined} target="_blank" rel="noreferrer" className="druck flex min-w-0 flex-1 items-center gap-3">
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate">{f.titel}</span>
+                    {f.zusatz && <span className="truncate text-[15px] text-text-2">{f.zusatz}</span>}
+                  </div>
+                  <span className={`shrink-0 text-[15px] ${tageBis(f.datum, heute) <= 7 ? "font-semibold text-orange" : "text-text-2"}`}>
+                    {countdown(tageBis(f.datum, heute))}
+                  </span>
+                </a>
+              </Zeile>
+            ))}
+          </Abschnitt>
+        )}
 
         {frei.length > 0 && (
           <Abschnitt titel="Frei">

@@ -1,4 +1,6 @@
-// Aufgaben aus Todoist (und später Business OS) in einer Liste.
+import { businessDaten } from "@/lib/business-os";
+
+// Aufgaben aus Todoist und Business OS in einer Liste.
 // Todoist: API v1 mit persönlichem Token TODOIST_TOKEN.
 
 export type Quelle = "todoist" | "business";
@@ -112,11 +114,13 @@ export async function todoistAnlegen(titel: string, faellig: string | null): Pro
 // Alle Quellen laden; Fehler je Quelle sammeln statt werfen
 export async function alleAufgaben(): Promise<AufgabenErgebnis> {
   const ergebnis: AufgabenErgebnis = { aufgaben: [], fehler: [] };
-  try {
-    ergebnis.aufgaben.push(...(await todoistAufgaben()));
-  } catch (e) {
-    ergebnis.fehler.push(`Todoist: ${e instanceof Error ? e.message : String(e)}`);
-  }
+  const text = (e: unknown) => (e instanceof Error ? e.message : String(e));
+  const [todoist, business] = await Promise.allSettled([todoistAufgaben(), businessDaten()]);
+  if (todoist.status === "fulfilled") ergebnis.aufgaben.push(...todoist.value);
+  else ergebnis.fehler.push(`Todoist: ${text(todoist.reason)}`);
+  if (business.status === "rejected") ergebnis.fehler.push(`Business OS: ${text(business.reason)}`);
+  else if (business.value) ergebnis.aufgaben.push(...business.value.aufgaben);
+  else ergebnis.fehler.push("Business OS ist noch nicht angebunden (BUSINESS_OS_URL, BUSINESS_OS_TOKEN).");
   ergebnis.aufgaben.sort(vergleich);
   return ergebnis;
 }

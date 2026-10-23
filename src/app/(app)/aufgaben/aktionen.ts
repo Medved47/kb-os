@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireZugang } from "@/lib/auth";
 import { todoistAnlegen, todoistErledigen, type Quelle } from "@/lib/aufgaben";
+import { businessErledigen } from "@/lib/business-os";
 
 type Antwort = { ok: boolean; meldung: string };
 
@@ -11,8 +12,8 @@ const DATUM = /^\d{4}-\d{2}-\d{2}$/;
 export async function aufgabeErledigen(quelle: Quelle, id: string): Promise<Antwort> {
   await requireZugang();
   try {
-    if (quelle !== "todoist") return { ok: false, meldung: "Business OS ist noch nicht angebunden." };
-    await todoistErledigen(id);
+    if (quelle === "business") await businessErledigen(id);
+    else await todoistErledigen(id);
   } catch (e) {
     return { ok: false, meldung: e instanceof Error ? e.message : String(e) };
   }
