@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireZugang } from "@/lib/auth";
+import { istKonto, verbindungTrennen, type Konto } from "@/lib/google";
 import { pushAnAlle } from "@/lib/push";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { base64urlLesen, erlaubterEndpunkt } from "@/lib/webpush";
@@ -60,4 +61,12 @@ export async function testSenden(): Promise<Antwort> {
   } catch (e) {
     return { ok: false, meldung: e instanceof Error ? e.message : String(e) };
   }
+}
+
+// Google-Konto trennen: Freigabe widerrufen und Token löschen
+export async function googleTrennen(konto: Konto): Promise<void> {
+  await requireZugang();
+  if (!istKonto(konto)) return;
+  await verbindungTrennen(createAdminClient(), konto);
+  revalidatePath("/einstellungen");
 }
