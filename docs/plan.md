@@ -1,4 +1,4 @@
-# Plan: Persönliche Tages-App für Kevin
+# Plan: KB OS (persönliche Tages-App für Kevin)
 
 Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Repos `Medved47/business-os` und `Medved47/webcodic`, Recherche und Absprachen in dieser Session. Noch nichts gebaut.
 
@@ -15,9 +15,13 @@ Stand: 23.10.2026. Grundlage: Übergabe aus claude.ai (`docs/uebergabe.md`), Rep
 | Claude API | Nein. Mail-Einordnung in der App nur über Regeln. Unklare Fälle und Antwortentwürfe übernimmt eine geplante Claude-Aufgabe. |
 | Privater Kalender | Die App liest ihn direkt über das private Google-Konto. Keine Freigabe nötig. |
 | Drive | Die App legt "Buchhaltung/JJJJ-MM" selbst an (Scope `drive.file` reicht) |
-| Belege | Nach Drive ablegen und an Finom weiterleiten (Import in Finom) |
+| Belege | Nur nach Drive, sortiert in "Buchhaltung/JJJJ-MM". Kevin übernimmt sie von dort selbst in Finom. Keine Weiterleitung. |
 | Mail zurückstellen | Nein |
 | Geld: Umsatz und offene Rechnungen | Nein |
+| Name | KB OS |
+| Morgenbriefing | Werktags 5:00, Samstag und Sonntag 9:00 (Europe/Berlin) |
+| Erfassen per Siri | Nein |
+| Claude-Connector der App | Ja. Die Claude-Aufgabe trägt darüber Einordnungen, Fristen und Abos direkt ein. |
 
 ## Aufbau
 
@@ -66,10 +70,10 @@ Vier Reiter unten wie in einer iOS-App. Systemschrift, abgerundete Karten, Hell-
 Regeln wie in der Übergabe (verbindlich, "Geschäftlich nie unter Privat"). Arbeitsteilung:
 
 1. **App, alle 15 Minuten:** neue Mails über Gmail `history.list` holen, nach festen Regeln sortieren (Empfänger, Delivered-To, Weiterleitungs-Kopfzeilen, bekannte Absender). Nicht Zuordenbares bekommt das Label "Einordnen". Haupt- und Unterlabel immer zusammen.
-2. **Claude-Aufgabe in claude.ai, 7, 12 und 17 Uhr:** sortiert die Mails unter "Einordnen", schreibt Antwortentwürfe, erkennt Fristen und Abos. Die bestehenden geplanten Läufe gehen darin auf.
+2. **Claude-Aufgabe in claude.ai, 7, 12 und 17 Uhr:** sortiert die Mails unter "Einordnen", schreibt Antwortentwürfe, erkennt Fristen und Abos und trägt sie über den Connector von KB OS ein. Die bestehenden geplanten Läufe gehen darin auf.
 3. **Lernen:** Setzt Claude oder Kevin für einen Absender zweimal dasselbe Label, schlägt die App eine feste Regel vor.
 
-Nie automatisch senden, löschen oder archivieren. Ausnahme nach Absprache: Weiterleitung von Belegen an die eigene Finom-Eingangsadresse.
+Nie automatisch senden, löschen oder archivieren.
 
 ## Fristen (automatisch)
 
@@ -87,7 +91,8 @@ Nie automatisch senden, löschen oder archivieren. Ausnahme nach Absprache: Weit
 | Todoist | Persönliches API-Token |
 | Business OS | Neuer JSON-Endpunkt (Aufgaben lesen, abhaken, anlegen; Projekt-Deadlines; Anrede je Kunde per Mailadresse) |
 | Wetter | Open-Meteo, ohne Schlüssel |
-| Finom | Weiterleitung von Belegen per Mail an die Eingangsadresse |
+
+Claude-Connector: eigener MCP-Endpunkt mit OAuth, Umsetzung nach Vorbild Business OS (`src/lib/api/`, `src/lib/oauth/`). Nur Werkzeuge für Einordnung, Fristen und Abos, kein Senden oder Löschen.
 
 Refresh-Tokens verschlüsselt in der Datenbank (AES-GCM), wie im Business OS. Web Push über VAPID, Code aus dem Business OS übernehmen.
 
@@ -95,20 +100,16 @@ Sicherheit: Zugriff nur für Kevin. Keine Daten an Dritte außer den nötigen AP
 
 ## Reihenfolge
 
-0. **Vorbereitung (Kevin, mit Anleitung):** Google-Cloud-Projekt und OAuth-Client, Cloudflare-Worker und Secrets, Todoist-Token, VAPID-Schlüssel, Finom-Eingangsadresse.
+0. **Vorbereitung (Kevin, mit Anleitung):** Google-Cloud-Projekt und OAuth-Client, Cloudflare-Worker und Secrets, Todoist-Token, VAPID-Schlüssel.
 1. **Grundgerüst:** PWA, Login, vier Reiter, Hell/Dunkel, Push einschalten, Offline-Stand.
 2. **Heute:** Kalender (beide), Wetter, Aufgaben (Business OS und Todoist), Fristen. Erster nutzbarer Stand.
 3. **Aufgaben:** Liste, Abhaken, Schnellerfassung, Abendabschluss, Arbeitslast-Warnung, Zeitblöcke.
 4. **Postfach:** Lesen, Ordner, Regel-Sortierung, Einordnen, Entwürfe, Textbausteine, Mail zu Aufgabe, Abbestellen, Badge.
-5. **Claude-Aufgabe umstellen:** neue Aufgabe 7/12/17 Uhr, alte Läufe nach Rücksprache abschalten.
-6. **Geld:** Abos und Einmalzahlungen, Warnungen, Monatssumme, Belege nach Drive und Finom.
-7. **Push-Berichte:** Morgenbriefing, Wochenrückblick (erledigt, Ausgaben, nächste Woche, 3 feste Fragen).
+5. **Claude-Connector und Claude-Aufgabe:** Connector bauen, neue Aufgabe 7/12/17 Uhr, alte Läufe nach Rücksprache abschalten.
+6. **Geld:** Abos und Einmalzahlungen, Warnungen, Monatssumme, Belege nach Drive.
+7. **Push-Berichte:** Morgenbriefing (werktags 5:00, Wochenende 9:00), Wochenrückblick (erledigt, Ausgaben, nächste Woche, 3 feste Fragen).
 8. **Ablösen:** Claude-Dashboard (Artifact) und alte Läufe abschalten, nach Rücksprache.
 
 ## Offen
 
-- Finom: Eingangsadresse, und ob Finom normale PDF-Belege per Mail annimmt (bisher nur für E-Rechnungen dokumentiert)
-- Erfassen per Siri-Kurzbefehl: ja oder nein
-- Eigener Claude-Connector der App, damit die Claude-Aufgabe Fristen und Abos direkt eintragen kann: ja oder nein
-- Uhrzeit des Morgenbriefings
-- Name der App
+- Nichts für den Plan. Vor dem Bauen: Google-, Supabase- und Cloudflare-Details in der aktuellen Doku prüfen.
