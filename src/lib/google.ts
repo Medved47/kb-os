@@ -28,9 +28,10 @@ type Konfig = { clientId: string; clientSecret: string; schluessel: string };
 // Zur Laufzeit lesen, null = noch nicht eingerichtet
 export function googleKonfig(): Konfig | null {
   const env = process.env;
-  const clientId = env["GOOGLE_CLIENT_ID"];
-  const clientSecret = env["GOOGLE_CLIENT_SECRET"];
-  const schluessel = env["GOOGLE_TOKEN_KEY"];
+  // Leerzeichen und Zeilenumbrüche aus dem Kopieren ins Dashboard entfernen
+  const clientId = env["GOOGLE_CLIENT_ID"]?.trim();
+  const clientSecret = env["GOOGLE_CLIENT_SECRET"]?.trim();
+  const schluessel = env["GOOGLE_TOKEN_KEY"]?.trim();
   if (!clientId || !clientSecret || !schluessel) return null;
   return { clientId, clientSecret, schluessel };
 }
