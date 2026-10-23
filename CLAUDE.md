@@ -13,6 +13,7 @@ Plan und Entscheidungen: [docs/plan.md](docs/plan.md), Übergabe aus claude.ai: 
 - Mail-Regel mit Vorrang: Eine geschäftliche Mail darf nie unter Privat landen (Details `docs/uebergabe.md`).
 - Neue Migrationen (SQL) immer zusätzlich vollständig im Chat ausgeben, zum Kopieren in den Supabase SQL Editor.
 - Vor jedem Commit: `npm run lint`, `npm run typecheck`, `npm test`.
+- Fertige Stände direkt auf `main` mergen und pushen (Erlaubnis Kevin 2026-10-23); Cloudflare baut von `main`.
 
 ## Technik
 
